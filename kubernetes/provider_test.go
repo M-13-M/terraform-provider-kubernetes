@@ -13,11 +13,13 @@ import (
 	"strings"
 	"testing"
 
+	"github.com/hashicorp/terraform-plugin-go/tfprotov6"
 	"github.com/hashicorp/terraform-plugin-testing/helper/resource"
 
 	gversion "github.com/hashicorp/go-version"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/terraform"
+	"github.com/hashicorp/terraform-provider-kubernetes/internal/mux"
 
 	//"github.com/hashicorp/terraform-plugin-testing/terraform"
 	api "k8s.io/api/core/v1"
@@ -36,6 +38,14 @@ var (
 	testAccProviderFactories = map[string]func() (*schema.Provider, error){
 		"kubernetes": func() (*schema.Provider, error) {
 			return Provider(), nil
+		},
+	}
+	// testAccProtoV6ProviderFactories uses the full mux server so tests that
+	// reference framework-migrated types (e.g. kubernetes_namespace_v1) work
+	// alongside SDKv2-backed types in the same config.
+	testAccProtoV6ProviderFactories = map[string]func() (tfprotov6.ProviderServer, error){
+		"kubernetes": func() (tfprotov6.ProviderServer, error) {
+			return mux.MuxServer(context.Background(), "test")
 		},
 	}
 )

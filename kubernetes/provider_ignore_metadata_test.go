@@ -27,7 +27,7 @@ func TestAccKubernetesIgnoreKubernetesMetadata_basic(t *testing.T) {
 			testAccPreCheck(t)
 			createNamespaceIgnoreKubernetesMetadata(namespaceName, ignoreKubernetesMetadata)
 		},
-		ProviderFactories: testAccProviderFactories,
+		ProtoV6ProviderFactories: testAccProtoV6ProviderFactories,
 		CheckDestroy: func(s *terraform.State) error {
 			return deleteNamespaceIgnoreKubernetesMetadata(namespaceName)
 		},
