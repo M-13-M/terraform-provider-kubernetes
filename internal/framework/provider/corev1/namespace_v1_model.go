@@ -9,8 +9,8 @@ import "github.com/hashicorp/terraform-plugin-framework/types"
 // kubernetes_namespace_v1 data source. Every field maps 1:1 to a schema
 // attribute or block via the tfsdk struct tag.
 type NamespaceV1DataSourceModel struct {
-	ID       types.String        `tfsdk:"id"`
-	Metadata []MetadataModel     `tfsdk:"metadata"`
+	ID       types.String         `tfsdk:"id"`
+	Metadata []MetadataModel      `tfsdk:"metadata"`
 	Spec     []NamespaceSpecModel `tfsdk:"spec"`
 }
 
