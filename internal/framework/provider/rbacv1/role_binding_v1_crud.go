@@ -186,17 +186,24 @@ func (r *RoleBindingV1) Update(ctx context.Context, req resource.UpdateRequest, 
 	planMeta := plan.Metadata[0]
 
 	// Build JSON Patch: metadata (annotations + labels) and subject list.
+	// Only call DiffStringMap when at least one side is non-empty. When both
+	// sides are nil/empty, DiffStringMap would emit an Add operation that
+	// replaces the entire map with {}, erasing any externally managed ignored keys.
 	ops := make(kubernetes.PatchOperations, 0)
-	ops = append(ops, kubernetes.DiffStringMap(
-		"/metadata/annotations",
-		toStringInterfaceMap(stateMeta.Annotations),
-		toStringInterfaceMap(planMeta.Annotations),
-	)...)
-	ops = append(ops, kubernetes.DiffStringMap(
-		"/metadata/labels",
-		toStringInterfaceMap(stateMeta.Labels),
-		toStringInterfaceMap(planMeta.Labels),
-	)...)
+	if len(stateMeta.Annotations) > 0 || len(planMeta.Annotations) > 0 {
+		ops = append(ops, kubernetes.DiffStringMap(
+			"/metadata/annotations",
+			toStringInterfaceMap(stateMeta.Annotations),
+			toStringInterfaceMap(planMeta.Annotations),
+		)...)
+	}
+	if len(stateMeta.Labels) > 0 || len(planMeta.Labels) > 0 {
+		ops = append(ops, kubernetes.DiffStringMap(
+			"/metadata/labels",
+			toStringInterfaceMap(stateMeta.Labels),
+			toStringInterfaceMap(planMeta.Labels),
+		)...)
+	}
 	ops = append(ops, patchSubjects(state.Subject, plan.Subject)...)
 
 	patchBytes, err := json.Marshal(ops)

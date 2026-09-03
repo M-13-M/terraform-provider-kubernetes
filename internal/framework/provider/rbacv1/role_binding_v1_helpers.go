@@ -88,13 +88,20 @@ func flattenNamespacedMetadata(meta metav1.ObjectMeta, current NamespacedMetadat
 	}
 
 	filtered := filterIgnoredMetadataKeys(meta.Annotations, current.Annotations, ignoreAnnotations)
+	// Preserve non-null empty map when the user explicitly configured annotations = {}.
+	// Without this, annotations={} in config would flatten to null and cause an
+	// inconsistent-result error on the next plan.
 	if len(filtered) > 0 {
 		result.Annotations = flattenStringMap(filtered)
+	} else if current.Annotations != nil {
+		result.Annotations = map[string]types.String{}
 	}
 
 	filtered = filterIgnoredMetadataKeys(meta.Labels, current.Labels, ignoreLabels)
 	if len(filtered) > 0 {
 		result.Labels = flattenStringMap(filtered)
+	} else if current.Labels != nil {
+		result.Labels = map[string]types.String{}
 	}
 
 	return result
