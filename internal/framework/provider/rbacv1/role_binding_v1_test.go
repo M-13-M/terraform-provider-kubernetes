@@ -246,7 +246,7 @@ func TestAccRoleBindingV1_upgradeFromSDKv2(t *testing.T) {
 				ExternalProviders: map[string]tfresource.ExternalProvider{
 					"kubernetes": {
 						Source:            "hashicorp/kubernetes",
-						VersionConstraint: "3.0.1",
+						VersionConstraint: "3.2.1",
 					},
 				},
 				Config: testAccRoleBindingV1Config_basic(name),
@@ -292,7 +292,7 @@ func TestAccRoleBindingV1_moved(t *testing.T) {
 				ExternalProviders: map[string]tfresource.ExternalProvider{
 					"kubernetes": {
 						Source:            "hashicorp/kubernetes",
-						VersionConstraint: "3.0.1",
+						VersionConstraint: "3.2.1",
 					},
 				},
 				Config: testAccRoleBindingConfig_deprecated(name),
